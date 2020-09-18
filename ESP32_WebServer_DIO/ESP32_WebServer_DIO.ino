@@ -2,8 +2,8 @@
 #include <WiFi.h>
 
 // Replace with your network credentials
-const char* ssid = "East'sNetwork";
-const char* password = "Kobe2018";
+const char* ssid = "MishMashLabs";  //Replace with your network ID
+const char* password = "mishmash";  // Replace with your network password
 
 // Set web server port number to 80
 WiFiServer server(80);
@@ -36,17 +36,16 @@ void setup() {
   digitalWrite(output4, LOW);
 
   // Connect to Wi-Fi network with SSID and password
-  Serial.print("Connecting to ");
+  Serial.print("Connecting to Network:");
   Serial.println(ssid);
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
   }
-  // Print local IP address and start web server
+  // Print the connnect IP address and start web server
   Serial.println("");
-  Serial.println("WiFi connected.");
-  Serial.println("IP address: ");
+  Serial.println("Connected. The device can be found at IP address: ");
   Serial.println(WiFi.localIP());
   server.begin();
 }
@@ -57,7 +56,7 @@ void loop(){
   if (client) {                             // If a new client connects,
     currentTime = millis();
     previousTime = currentTime;
-    Serial.println("New Client.");          // print a message out in the serial port
+    Serial.println("New Client found.");          // print a message out in the serial port
     String currentLine = "";                // make a String to hold incoming data from the client
     while (client.connected() && currentTime - previousTime <= timeoutTime) {  // loop while the client's connected
       currentTime = millis();
@@ -78,11 +77,11 @@ void loop(){
             
             // turns the GPIOs on and off
             if (header.indexOf("GET /15/on") >= 0) {
-              Serial.println("GPIO 15 on");
+              Serial.println("GPIO 15 On");
               output15State = "on";
               digitalWrite(output15, HIGH);
             } else if (header.indexOf("GET /15/off") >= 0) {
-              Serial.println("GPIO 15 off");
+              Serial.println("GPIO 15 Off");
               output15State = "off";
               digitalWrite(output15, LOW);
             } else if (header.indexOf("GET /4/on") >= 0) {
@@ -107,10 +106,11 @@ void loop(){
             client.println(".button2 {background-color: #555555;}</style></head>");
             
             // Web Page Heading
+            client.println("<body><h1>Mish Mash Labs</h1>");
             client.println("<body><h1>ESP32 Web Server</h1>");
             
             // Display current state, and ON/OFF buttons for GPIO 15  
-            client.println("<p>GPIO 15 - State " + output15State + "</p>");
+            client.println("<p>GPIO 15 - Currently " + output15State + "</p>");
             // If the output15State is off, it displays the ON button       
             if (output15State=="off") {
               client.println("<p><a href=\"/15/on\"><button class=\"button\">ON</button></a></p>");
@@ -119,7 +119,7 @@ void loop(){
             } 
                
             // Display current state, and ON/OFF buttons for GPIO 4  
-            client.println("<p>GPIO 4 - State " + output4State + "</p>");
+            client.println("<p>GPIO 4 - Currently" + output4State + "</p>");
             // If the output4State is off, it displays the ON button       
             if (output4State=="off") {
               client.println("<p><a href=\"/4/on\"><button class=\"button\">ON</button></a></p>");
